@@ -42,3 +42,6 @@ app.register_blueprint(profile.bp)
 # Register custom Jinja filter
 from app.utils.func import utc_to_local
 app.jinja_env.filters['utc_to_local'] = utc_to_local
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)

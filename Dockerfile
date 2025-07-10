@@ -3,6 +3,6 @@ COPY . /app
 WORKDIR /app
 RUN pip install -r requirements.txt
 ENTRYPOINT ["python"]
-CMD panhinda.py
+CMD flask run
 
 EXPOSE 80

@@ -10,3 +10,4 @@ def make_shell_context():
     return {'sa': sa, 'so': so, 'db': db, 'User': User, 'Article': Article, 'Category': Category, 'SubCategory': SubCategory}
 
 
+app.run(host='0.0.0.0', port=5000)

@@ -6,7 +6,6 @@ from flask_wtf import FlaskForm
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
-from app import app
 from flask import session, abort
 
 

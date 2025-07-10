@@ -9,7 +9,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from flask_mail import Message
 from flask import render_template, current_app
 
-from app import db, app
+from app import db
 from app import login_manager
 from app import mail
 from app.utils.func import get_sha256_hash
@@ -123,12 +123,15 @@ class User(UserMixin, db.Model):
         }
 
     def get_email_verification_token(self):
+        from main import app
+
         s = Serializer(app.config.get("SECRET_KEY"))
         return s.dumps(self.email, salt="confmai1")
 
     @staticmethod
     def verify_email_token(token) -> str | None:
-        
+        from main import app
+
         EXPIRATION_TIME=600
         serializer = Serializer(app.config.get("SECRET_KEY"))
 
@@ -139,6 +142,8 @@ class User(UserMixin, db.Model):
         return email
 
     def send_otp(self) -> bool:
+        from main import app
+
 
         SUBJECT = "Panhinda User Login - One time Password"
         EXPIRATION_TIME = 600

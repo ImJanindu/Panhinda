@@ -1,44 +1,48 @@
 from flask import Flask
-from config import Config, basedir
+from config import Config
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_mail import Mail
 
-# Initialize the Flask application
-app = Flask(__name__)
+# Initialize extensions (without app)
+db = SQLAlchemy()
+migrate = Migrate()
+login_manager = LoginManager()
+mail = Mail()
+sess = Session()
 
-# Load configuration from Config object
-app.config.from_object(Config)
+def create_app(config_class=Config):
+    app = Flask(__name__)
+    app.config.from_object(config_class)
 
-# Initialize extensions
-db: SQLAlchemy = SQLAlchemy(app)          # Database ORM
-migrate = Migrate(app, db)                # Database migrations
-login_manager = LoginManager(app)         # User session management
-Session(app)                              # Server-side sessions
-mail = Mail(app)                          # Email support
+    # Initialize extensions with app
+    db.init_app(app)
+    migrate.init_app(app, db)
+    login_manager.init_app(app)
+    mail.init_app(app)
+    sess.init_app(app)
 
-# Configure login manager
-login_manager.login_view = 'auth.login'   # Redirect to login page if not logged in
-login_manager.login_message = 'Login Required'  # Message for login required
+    # Configure login manager
+    login_manager.login_view = 'auth.login'
+    login_manager.login_message = 'Login Required'
 
-# Import routes and models to register them with the app
-from app import routes
-from app.auth import routes
-from app.articles import routes
-from app.profile import routes
-from app.auth.models import *
-from app.articles.models import *
+    # Import and register blueprints
+    from app.auth import bp as auth_bp
+    from app.articles import bp as articles_bp
+    from app.profile import bp as profile_bp
 
-# Import blueprints
-from app import auth, articles, profile
+    app.register_blueprint(auth_bp)
+    app.register_blueprint(articles_bp)
+    app.register_blueprint(profile_bp)
 
-# Register blueprints
-app.register_blueprint(auth.bp)
-app.register_blueprint(articles.bp)
-app.register_blueprint(profile.bp)
+    # Register custom Jinja filter
+    from app.utils.func import utc_to_local
+    app.jinja_env.filters['utc_to_local'] = utc_to_local
 
-# Register custom Jinja filter
-from app.utils.func import utc_to_local
-app.jinja_env.filters['utc_to_local'] = utc_to_local
+    # Import models (for migrations, etc.)
+    from app.auth import models as _  # noqa: F401
+    from app.articles import models as _  # noqa: F401
+
+    return app

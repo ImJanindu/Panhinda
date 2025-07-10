@@ -1,0 +1,68 @@
+{# templates/articles/macros.html #}
+
+<!-- Renders a Comment Structure -->
+
+{% macro render_comment(comment) %}
+
+<div class=" flex flex-col my-7 mx-2 text-neutral-800">
+    <div class="flex flex-row gap-2">
+        <div class="flex flex-row gap-2 font-kanit font-light text-sm items-center mb-1">
+            <span>Posted by</span>
+            <span>
+                &commat;{{ comment.user.username }}
+            </span>
+            <a href="{{ url_for('profile.view_profile') }}">
+                <img src="{{url_for('static', filename='user_data/profiles/default.png')}}" alt="profile picture"
+                    class="w-7 h-7 object-cover rounded-4xl cursor-pointer border-neutral-900 border-3">
+            </a>
+            <span>
+                On {{ comment.created | utc_to_local('%b. %d, %Y')}}
+            </span>
+        </div>
+    </div>
+
+    <div class="w-full">
+        <p
+            class="font-sans text-sm w-fit max-w-xl bg-neutral-400 shadow-neutral-600 shadow-md opacity-90 rounded-md text-neutral-900 font-semibold mb-5 mt-2 px-3 py-3 break-words">
+            {{comment.body }}&nbsp;
+            {% if comment.edited %}
+            <span class="text-sm text-yellow-100">(edited)</span>
+            {% endif %}
+        </p>
+    </div>
+
+    <div class="flex flex-row gap-3">
+        {% if comment.user.id == current_user.id %}
+        <form action="{{article.id}}/delete_comment" method="post" class="w-fit">
+            <input type="hidden" name="comment_id" value="{{comment.id}}">
+            <input type="hidden" name="article_id" value="{{article.id}}">
+            <button type="submit"
+                class="text-neutral-600  text-xs underline font-semibold cursor-pointer hover:text-red-400 transition-colors delay-100">Delete&nbsp;<i
+                    class="fa fa-trash"></i></button>
+        </form>
+
+        <form action="{{article.id}}/edit_comment" method="get" class="w-fit">
+            <input type="hidden" name="comment_id" value="{{comment.id}}">
+            <input type="hidden" name="article_id" value="{{article.id}}">
+            <button type="submit"
+                class="text-neutral-600  text-xs underline font-semibold cursor-pointer hover:text-red-400 transition-colors delay-100">Edit&nbsp;<i
+                    class="fa fa-pen"></i></button>
+        </form>
+        {% else %}
+        <div class="flex flex-row text-xs gap-2">
+            <div class="last-updated">
+                Last Updated {{ comment.edited | utc_to_local('%b. %d, %Y') if comment.edited else comment.created |
+                utc_to_local('%b. %d, %Y')}}
+            </div>
+            <div class="text-xs text-red-500 underline underline-offset-1">
+                <a href="#">
+                    Report this comment
+                    &nbsp;<i class="fa fa-info-circle"></i>
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endmacro %}

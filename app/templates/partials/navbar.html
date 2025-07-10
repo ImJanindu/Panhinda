@@ -1,0 +1,96 @@
+<div class="flex flex-row py-5 px-4 shadow-neutral-900 shadow-sm">
+    <h1>
+        <a href="{{ url_for('index') }}"
+            class="font-sans sm:text-3xl text-2xl  rounded-md px-2 py-1 border-2 border-dashed"><i
+                class="fa fa-feather mx-2"></i></a>
+    </h1>
+
+    <nav class="flex sm:gap-4 sm:px-3 items-center text-md  sm:ml-0 ml-3">
+        <a href="{{ url_for('index') }}"><span
+                class="pb-1.5 hidden sm:block font-signika px-4 py-1.5 rounded hover:bg-neutral-700 hover:text-neutral-100 text-neutral-500 font-semibold transition-discrete transition-all duration-200">Home</span></a>
+        <a href="{{ url_for('articles.view_articles') }}"><span
+                class="pb-1.5  font-signika px-4 py-1.5 rounded hover:bg-neutral-700 hover:text-neutral-100 text-neutral-500 font-semibold transition-discrete transition-colors duration-200 {{ 'hidden sm:block' if not current_user.is_anonymous }}">Explorer</span></a>
+        <a href="{{ url_for('articles.view_create_article') }}"><span
+                class="pb-1.5 hidden sm:block font-signika px-4 py-1.5 rounded hover:bg-neutral-700 hover:text-neutral-100 text-neutral-500 font-semibold transition-discrete transition-colors duration-200 ">Create</span></a>
+    </nav>
+
+    <div class="flex gap-3 flex-row ml-auto">
+
+        <i class="sm:block hidden fa fa-burgar "></i>
+
+        {% if current_user.is_anonymous %}
+
+
+        <a href="{{ url_for('auth.login') }}">
+            <button class="
+                cursor-pointer font-fira px-4 py-1.5 font-semibold rounded-md text-sm 
+                 {{ 
+                    'bg-neutral-800 text-neutral-100  border-neutral-950 border-2 hidden sm:block' 
+                    if request.path != '/auth/register/user-details' 
+                    else 'text-neutral-800 rounded-md border-neutral-950 border-2'
+                }}
+            ">
+                Login
+            </button>
+        </a>
+        <a href="{{ url_for('auth.register_user_details') }}">
+            <button class="
+                cursor-pointer font-fira px-4 py-1.5 font-semibold rounded-md text-sm sm:mr-0
+                {{ 
+                    'bg-neutral-800 text-neutral-100  border-neutral-950 border-2 hidden sm:block' 
+                    if request.path == '/auth/register/user-details' 
+                    else 'text-neutral-800 rounded-md border-neutral-950 border-2 mr-5' 
+                }}
+            ">
+                Signup
+            </button>
+        </a>
+    </div>
+
+    {% else %}
+
+    <div class="flex flex-row justify-evenly items-center gap-4 sm:ml-auto sm:mr-3">
+        <p class="text-neutral-700 font-noto text-xs">
+            Welcome, &nbsp;<a href="{{ url_for('profile.view_profile') }}"
+                class="underline underline-offset-2 text-neutral-950 text-sm">{{
+                current_user.first_name }}</a> !
+        </p>
+        <div class="relative group">
+
+            <a href="{{ url_for('profile.view_profile') }}">
+                <img src="{{url_for('static', filename='user_data/profiles/default.png')}}" alt="profile picture"
+                    class="w-10 h-10 object-cover rounded-3xl cursor-pointer border-neutral-900 border-3 shadow-xl">
+            </a>
+
+            <div
+                class="sm:flex hidden flex-col gap-3 bg-linear-to-tr from-yellow-300 to-neutral-400 border border-neutral-800 px-4 py-4 absolute bottom-[-130px] left-[-230px] w-[250px]  shadow-xl rounded-xl group-hover:opacity-90 opacity-0 transition-all duration-300 z-50">
+
+                <div class="flex flex-row gap-3 items-center">
+                    <a href="{{ url_for('profile.view_profile') }}">
+                        <img src="{{url_for('static', filename='user_data/profiles/default.png')}}"
+                            alt="profile picture"
+                            class="w-14 h-14 object-cover rounded-full cursor-pointer border-neutral-900 border-3 shadow-xl opacity-90">
+                    </a>
+                    <div class="flex flex-col gap-1 pl-2">
+                        <span class="font-semibold text-neutral-700 text-base">{{ current_user.first_name }} {{ current_user.last_name }}</span>
+                        <span class="text-xs text-neutral-900">{{ session['articles_wrote_count'] }} articles &bull; {{ session['likes_gained'] }} likes</span>
+                    </div>
+                </div>
+
+                
+                <div class="flex flex-row gap-2 mt-1 w-full justify-center">
+                    <a href="{{ url_for('profile.view_profile') }}"
+                        class="flex-1 text-center border border-neutral-700 rounded-md text-xs py-1 px-4 cursor-pointer text-neutral-100 bg-neutral-800 hover:bg-neutral-700 hover:text-green-200 transition-colors duration-200 font-semibold">
+                        View Profile
+                    </a>
+                    <a href="{{ url_for('auth.logout') }}"
+                        class="flex-1 text-center border border-neutral-700 rounded-md text-xs py-1 px-4 cursor-pointer text-neutral-100 bg-neutral-800 hover:bg-neutral-700 hover:text-red-200 transition-colors duration-200 font-semibold">
+                        Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+</div>

@@ -1,4 +1,4 @@
-FROM python:3.11-slim-buster
+FROM python:3.13.0-alpine
 
 RUN apt update && apt upgrade -y
 RUN apt install python3-pip -y

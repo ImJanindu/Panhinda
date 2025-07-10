@@ -1,5 +1,4 @@
 ﻿alembic==1.15.2
-gunicorn
 aniso8601==10.0.0
 bcrypt==4.3.0
 bidict==0.23.1
